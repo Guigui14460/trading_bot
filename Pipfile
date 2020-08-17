@@ -9,6 +9,8 @@ verify_ssl = true
 numpy = "*"
 matplotlib = "*"
 pandas = "*"
+alpha-vantage = "*"
+python-dotenv = "*"
 
 [requires]
 python_version = "3.7"
