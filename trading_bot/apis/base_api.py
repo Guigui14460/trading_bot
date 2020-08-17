@@ -42,6 +42,8 @@ class BaseAPI(abc.ABC):
 
     def __init__(self, base_url: str, df: pd.DataFrame = None) -> None:
         """
+        Initializer and constructor of the class.
+
         Parameters
         ----------
         base_url : str
