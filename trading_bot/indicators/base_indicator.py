@@ -14,7 +14,6 @@ classes and functions:
 """
 
 import abc
-import numpy as np
 import pandas as pd
 
 
@@ -69,7 +68,7 @@ class Indicator(abc.ABC):
         return self.__column_name
 
     @abc.abstractmethod
-    def calculate(self, df: pd.DataFrame) -> np.array:
+    def calculate(self, df: pd.DataFrame) -> pd.DataFrame:
         """
         Calculate the indicator for the given data.
 
@@ -80,8 +79,8 @@ class Indicator(abc.ABC):
 
         Returns
         -------
-        np.array
-            a numpy array containing the calculated data
+        pd.DataFrame
+            the DataFrame containing the calculated data
         """
         pass
 
