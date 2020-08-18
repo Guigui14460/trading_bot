@@ -14,12 +14,16 @@ classes:
     * BasicIndicator - abstract class used to reprensent the base of each basic indicator that we will use
     * HighestHigh - class used to reprensent "Highest High" indicator
     * LowestLow - class used to reprensent "Lowest Low" indicator
+    * MedianPrice - class used to reprensent "Median price" indicator
+    * TypicalPrice - class used to reprensent "Typical price" indicator
+    * AverageTrueRange - class used to reprensent "Average True Range" or "ATR" indicator
 """
 
 from .base_indicator import Indicator
 from .basic_indicator import (
     BasicIndicator, HighestHigh,
-    LowestLow,
+    LowestLow, MedianPrice,
+    TypicalPrice, AverageTrueRange,
 )
 
 __all__ = [
@@ -27,4 +31,7 @@ __all__ = [
     'BasicIndicator',
     'HighestHigh',
     'LowestLow',
+    'MedianPrice',
+    'TypicalPrice',
+    'AverageTrueRange',
 ]

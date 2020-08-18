@@ -1,4 +1,4 @@
-"""Base Indicator class
+"""Base Indicator class.
 
 This file allows developer to create any financial indicator which it inherit from the class contains in this file.
 
@@ -27,6 +27,7 @@ class Indicator(abc.ABC):
         indicator name to put in the pandas dataframe.
         To access to the value of this private attribute, you must use
         :func:`~trading_bot.indicators.Indicator.get_column_name` method.
+
     period : int
         numer of ticks that indicator is based to calculate
 
@@ -34,8 +35,10 @@ class Indicator(abc.ABC):
     -------
     get_column_name()
         Return the column name associated at this indicator.
+
     calculate(df)
         Calculate the indicator for the given data.
+
     calculate_in_place(df)
         Calculate the indicator for the given data and put this directly in 
         the dataframe.
@@ -49,6 +52,7 @@ class Indicator(abc.ABC):
         ----------
         column_name : str
             indicator name to put in the pandas dataframe
+
         period : int
             number of ticks that indicator is based to calculate
         """
