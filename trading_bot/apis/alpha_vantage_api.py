@@ -1,8 +1,8 @@
 from alpha_vantage.timeseries import TimeSeries
 import pandas as pd
 
-from trading_bot.apis.base_api import BaseAPI
 from trading_bot.settings import ALPHA_VANTAGE_API_KEY
+from .base_api import BaseAPI
 
 
 class AlphaVantage(BaseAPI):
