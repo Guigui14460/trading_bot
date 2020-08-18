@@ -1,13 +1,14 @@
+import os
 import unittest
 
 import numpy as np
 import pandas as pd
 
-from trading_bot.apis.alpha_vantage_api import AlphaVantage
 from trading_bot.indicators import (
     HighestHigh, LowestLow, MedianPrice,
     TypicalPrice, AverageTrueRange,
 )
+from trading_bot.settings import DATA_PATH
 
 
 class BasicIndicatorTest(unittest.TestCase):
@@ -17,8 +18,8 @@ class BasicIndicatorTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
-        cls.api = AlphaVantage()
-        cls.data = cls.api.load_data("2019-01-01", "2020-01-01", "MSFT")
+        print(os.path.join(DATA_PATH, "MSFT.csv"))
+        cls.data = pd.read_csv(os.path.join(DATA_PATH, "MSFT.csv"))
 
     def test_highest_high(self) -> None:
         hh = HighestHigh()
