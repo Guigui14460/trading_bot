@@ -105,7 +105,8 @@ class SimpleMovingAverage(MovingAverageIndicator):
         if period < 0:
             raise ValueError("period cannot be lesser than 0")
         period = int(period)
-        MovingAverageIndicator.__init__(self, "SMA (" + period + ")", period)
+        MovingAverageIndicator.__init__(
+            self, "SMA (" + str(period) + ")", period)
 
     def calculate(self, df: pd.DataFrame) -> pd.Series:
         """
@@ -170,7 +171,8 @@ class ExponentialMovingAverage(MovingAverageIndicator):
         if period < 0:
             raise ValueError("period cannot be lesser than 0")
         period = int(period)
-        MovingAverageIndicator.__init__(self, "EMA (" + period + ")", period)
+        MovingAverageIndicator.__init__(
+            self, "EMA (" + str(period) + ")", period)
 
     def calculate(self, df: pd.DataFrame) -> pd.Series:
         """
@@ -235,7 +237,8 @@ class DoubleExponentialMovingAverage(MovingAverageIndicator):
         if period < 0:
             raise ValueError("period cannot be lesser than 0")
         period = int(period)
-        MovingAverageIndicator.__init__(self, "DEMA (" + period + ")", period)
+        MovingAverageIndicator.__init__(
+            self, "DEMA (" + str(period) + ")", period)
 
     def calculate(self, df: pd.DataFrame) -> pd.Series:
         """
@@ -302,7 +305,8 @@ class TripleExponentialMovingAverage(MovingAverageIndicator):
         if period < 0:
             raise ValueError("period cannot be lesser than 0")
         period = int(period)
-        MovingAverageIndicator.__init__(self, "TEMA (" + period + ")", period)
+        MovingAverageIndicator.__init__(
+            self, "TEMA (" + str(period) + ")", period)
 
     def calculate(self, df: pd.DataFrame) -> pd.Series:
         """
@@ -377,7 +381,8 @@ class MovingAverageEnvelopes(MovingAverageIndicator):
         period = int(period)
         if percent < 0:
             percent = 0
-        MovingAverageIndicator.__init__(self, "MAE (" + period + ")", period)
+        MovingAverageIndicator.__init__(
+            self, "MAE (" + str(period) + ")", period)
 
     def calculate(self, df: pd.DataFrame) -> pd.Series:
         """
@@ -464,7 +469,8 @@ class TriangularMovingAverage(MovingAverageIndicator):
         if period < 0:
             raise ValueError("period cannot be lesser than 0")
         period = int(period)
-        MovingAverageIndicator.__init__(self, "TMA (" + period + ")", period)
+        MovingAverageIndicator.__init__(
+            self, "TMA (" + str(period) + ")", period)
 
     def calculate(self, df: pd.DataFrame) -> pd.Series:
         """
@@ -533,7 +539,7 @@ class WildersMovingAverage(MovingAverageIndicator):
             raise ValueError("period cannot be lesser than 0")
         period = int(period)
         MovingAverageIndicator.__init__(
-            self, "WildersMA (" + period + ")", period)
+            self, "WildersMA (" + str(period) + ")", period)
 
     def calculate(self, df: pd.DataFrame) -> pd.Series:
         """
@@ -600,7 +606,7 @@ class WeigthtedMovingAverage(MovingAverageIndicator):
             raise ValueError("period cannot be lesser than 0")
         period = int(period)
         MovingAverageIndicator.__init__(
-            self, "WMA (" + period + ")", period)
+            self, "WMA (" + str(period) + ")", period)
 
     def calculate(self, df: pd.DataFrame, asc: bool = True) -> pd.Series:
         """

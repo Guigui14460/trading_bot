@@ -101,7 +101,8 @@ class HighestHigh(BasicIndicator):
         if period < 0:
             raise ValueError("period cannot be lesser than 0")
         period = int(period)
-        BasicIndicator.__init__(self, "Highest High (" + period + ")", period)
+        BasicIndicator.__init__(
+            self, "Highest High (" + str(period) + ")", period)
 
     def calculate(self, df: pd.DataFrame) -> pd.Series:
         """
@@ -165,7 +166,8 @@ class LowestLow(BasicIndicator):
         if period < 0:
             raise ValueError("period cannot be lesser than 0")
         period = int(period)
-        BasicIndicator.__init__(self, "Lowest Low (" + period + ")", period)
+        BasicIndicator.__init__(
+            self, "Lowest Low (" + str(period) + ")", period)
 
     def calculate(self, df: pd.DataFrame) -> pd.Series:
         """
@@ -332,7 +334,7 @@ class AverageTrueRange(BasicIndicator):
             raise ValueError("period cannot be lesser than 0")
         period = int(period)
         BasicIndicator.__init__(
-            self, "Average True Range (" + period + ")", period)
+            self, "Average True Range (" + str(period) + ")", period)
 
     def calculate(self, df: pd.DataFrame) -> pd.Series:
         """
