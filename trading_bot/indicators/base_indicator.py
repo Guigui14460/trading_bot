@@ -83,8 +83,8 @@ class Indicator(abc.ABC):
 
         Returns
         -------
-        pd.DataFrame
-            the DataFrame containing the calculated data
+        pd.Series
+            the serie containing the calculated data
         """
         pass
 

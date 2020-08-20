@@ -18,7 +18,6 @@ class BasicIndicatorTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
-        print(os.path.join(DATA_PATH, "MSFT.csv"))
         cls.data = pd.read_csv(os.path.join(DATA_PATH, "MSFT.csv"))
 
     def test_highest_high(self) -> None:

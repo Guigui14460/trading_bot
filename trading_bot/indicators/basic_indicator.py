@@ -92,8 +92,16 @@ class HighestHigh(BasicIndicator):
         ----------
         period : int, optional
             number of ticks that indicator is based to calculate (default = 14)
+
+        Raises
+        ------
+        ValueError
+            If the `period` is lesser than 0
         """
-        BasicIndicator.__init__(self, "Highest High", period)
+        if period < 0:
+            raise ValueError("period cannot be lesser than 0")
+        period = int(period)
+        BasicIndicator.__init__(self, "Highest High (" + period + ")", period)
 
     def calculate(self, df: pd.DataFrame) -> pd.Series:
         """
@@ -106,20 +114,15 @@ class HighestHigh(BasicIndicator):
 
         Returns
         -------
-        pd.DataFrame
-            the DataFrame containing the calculated data
+        pd.Series
+            the serie containing the calculated data
 
         Raises
         ------
         KeyError
-            If the dataframe is not sdandardize yet
+            If the dataframe is not standardize yet
         """
-        highest_high = df['High'].copy()
-        if self.period <= len(highest_high):
-            for i in range(0, len(highest_high)):
-                subframe = df['High'][i-self.period+1:i+1]
-                highest_high[i] = subframe.max(skipna=True)
-        return highest_high
+        return df['High'].rolling(window=self.period).max(skipna=True)
 
 
 class LowestLow(BasicIndicator):
@@ -153,8 +156,16 @@ class LowestLow(BasicIndicator):
         ----------
         period : int, optional
             number of ticks that indicator is based to calculate (default = 14)
+
+        Raises
+        ------
+        ValueError
+            If the `period` is lesser than 0
         """
-        BasicIndicator.__init__(self, "Lowest Low", period)
+        if period < 0:
+            raise ValueError("period cannot be lesser than 0")
+        period = int(period)
+        BasicIndicator.__init__(self, "Lowest Low (" + period + ")", period)
 
     def calculate(self, df: pd.DataFrame) -> pd.Series:
         """
@@ -167,20 +178,15 @@ class LowestLow(BasicIndicator):
 
         Returns
         -------
-        pd.DataFrame
-            the DataFrame containing the calculated data
+        pd.Series
+            the serie containing the calculated data
 
         Raises
         ------
         KeyError
-            If the dataframe is not sdandardize yet
+            If the dataframe is not standardize yet
         """
-        lowest_low = df['Low'].copy()
-        if self.period <= len(lowest_low):
-            for i in range(0, len(lowest_low)):
-                subframe = df['Low'][i-self.period+1:i+1]
-                lowest_low[i] = subframe.min(skipna=True)
-        return lowest_low
+        return df['Low'].rolling(window=self.period).min(skipna=True)
 
 
 class MedianPrice(BasicIndicator):
@@ -223,13 +229,13 @@ class MedianPrice(BasicIndicator):
 
         Returns
         -------
-        pd.DataFrame
-            the DataFrame containing the calculated data
+        pd.Series
+            the serie containing the calculated data
 
         Raises
         ------
         KeyError
-            If the dataframe is not sdandardize yet
+            If the dataframe is not standardize yet
         """
         return np.mean(np.stack((df['High'], df['Low'])), axis=0)
 
@@ -274,13 +280,13 @@ class TypicalPrice(BasicIndicator):
 
         Returns
         -------
-        pd.DataFrame
-            the DataFrame containing the calculated data
+        pd.Series
+            the serie containing the calculated data
 
         Raises
         ------
         KeyError
-            If the dataframe is not sdandardize yet
+            If the dataframe is not standardize yet
         """
         return np.mean(np.stack((df['High'], df['Low'], df['Close'])), axis=0)
 
@@ -316,8 +322,17 @@ class AverageTrueRange(BasicIndicator):
         ----------
         period : int, optional
             number of ticks that indicator is based to calculate (default = 14)
+
+        Raises
+        ------
+        ValueError
+            If the `period` is lesser than 0
         """
-        super().__init__("Average True Range", period)
+        if period < 0:
+            raise ValueError("period cannot be lesser than 0")
+        period = int(period)
+        BasicIndicator.__init__(
+            self, "Average True Range (" + period + ")", period)
 
     def calculate(self, df: pd.DataFrame) -> pd.Series:
         """
@@ -330,13 +345,13 @@ class AverageTrueRange(BasicIndicator):
 
         Returns
         -------
-        pd.DataFrame
-            the DataFrame containing the calculated data
+        pd.Series
+            the serie containing the calculated data
 
         Raises
         ------
         KeyError
-            If the dataframe is not sdandardize yet
+            If the dataframe is not standardize yet
         """
         tr0 = abs(df['High'] - df['Low'])
         tr1 = abs(df['High'] - df['Close'].shift(1))
