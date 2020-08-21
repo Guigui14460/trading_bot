@@ -9,7 +9,7 @@ environment you are running this script in.
 
 This file can also be imported as a module and contains of the following 
 classes and functions:
-
+    * MovingAverageIndicator - abstract class used to reprensent the base of each moving average indicator that we will use
     * SimpleMovingAverage -  class used to reprensent "Simple Moving Average" or "SMA" indicator
     * ExponentialMovingAverage - class used to reprensent "Exponential Moving Average" or "EMA" indicator
     * DoubleExponentialMovingAverage - class used to reprensent "Double Exponential Moving Average" or "DEMA" indicator
@@ -25,7 +25,6 @@ import numpy as np
 import pandas as pd
 
 from trading_bot.indicators.base_indicator import Indicator
-from trading_bot.indicators.utils import wwma
 
 
 class MovingAverageIndicator(Indicator, metaclass=abc.ABCMeta):
@@ -41,6 +40,9 @@ class MovingAverageIndicator(Indicator, metaclass=abc.ABCMeta):
     -------
     get_column_name()
         Return the column name associated at this indicator.
+
+    calculate_serie(serie)
+        Calculate the indicator for the given serie.
 
     calculate(df)
         Calculate the indicator for the given data.
@@ -80,6 +82,9 @@ class SimpleMovingAverage(MovingAverageIndicator):
     get_column_name()
         Return the column name associated at this indicator.
 
+    calculate_serie(serie)
+        Calculate the indicator for the given serie.
+
     calculate(df)
         Calculate the indicator for the given data.
 
@@ -108,6 +113,22 @@ class SimpleMovingAverage(MovingAverageIndicator):
         MovingAverageIndicator.__init__(
             self, "SMA (" + str(period) + ")", period)
 
+    def calculate_serie(self, serie: pd.Series) -> pd.Series:
+        """
+        Calculate the indicator for the given serie.
+
+        Parameters
+        ----------
+        serie : pd.Series
+            data used to calculate the indicator
+
+        Returns
+        -------
+        pd.Series
+            the serie containing the calculated data
+        """
+        return serie.rolling(window=self.period).mean()
+
     def calculate(self, df: pd.DataFrame) -> pd.Series:
         """
         Calculate the indicator for the given data.
@@ -127,7 +148,7 @@ class SimpleMovingAverage(MovingAverageIndicator):
         KeyError
             If the dataframe is not standardize yet
         """
-        return df['Close'].rolling(self.period).mean()
+        return self.calculate_serie(df['Close'])
 
 
 class ExponentialMovingAverage(MovingAverageIndicator):
@@ -145,6 +166,9 @@ class ExponentialMovingAverage(MovingAverageIndicator):
     -------
     get_column_name()
         Return the column name associated at this indicator.
+
+    calculate_serie(serie)
+        Calculate the indicator for the given serie.
 
     calculate(df)
         Calculate the indicator for the given data.
@@ -174,6 +198,22 @@ class ExponentialMovingAverage(MovingAverageIndicator):
         MovingAverageIndicator.__init__(
             self, "EMA (" + str(period) + ")", period)
 
+    def calculate_serie(self, serie: pd.Series) -> pd.Series:
+        """
+        Calculate the indicator for the given serie.
+
+        Parameters
+        ----------
+        serie : pd.Series
+            data used to calculate the indicator
+
+        Returns
+        -------
+        pd.Series
+            the serie containing the calculated data
+        """
+        return serie.ewm(span=self.period, adjust=False).mean()
+
     def calculate(self, df: pd.DataFrame) -> pd.Series:
         """
         Calculate the indicator for the given data.
@@ -193,7 +233,7 @@ class ExponentialMovingAverage(MovingAverageIndicator):
         KeyError
             If the dataframe is not standardize yet
         """
-        return df['Close'].ewm(span=self.period, adjust=False).mean()
+        return self.calculate_serie(df['Close'])
 
 
 class DoubleExponentialMovingAverage(MovingAverageIndicator):
@@ -211,6 +251,9 @@ class DoubleExponentialMovingAverage(MovingAverageIndicator):
     -------
     get_column_name()
         Return the column name associated at this indicator.
+
+    calculate_serie(serie)
+        Calculate the indicator for the given serie.
 
     calculate(df)
         Calculate the indicator for the given data.
@@ -240,6 +283,25 @@ class DoubleExponentialMovingAverage(MovingAverageIndicator):
         MovingAverageIndicator.__init__(
             self, "DEMA (" + str(period) + ")", period)
 
+    def calculate_serie(self, serie: pd.Series) -> pd.Series:
+        """
+        Calculate the indicator for the given serie.
+
+        Parameters
+        ----------
+        serie : pd.Series
+            data used to calculate the indicator
+
+        Returns
+        -------
+        pd.Series
+            the serie containing the calculated data
+        """
+        ema_obj = ExponentialMovingAverage(self.period)
+        ema1 = ema_obj.calculate_serie(serie)
+        ema2 = ema_obj.calculate_serie(ema1)
+        return 2*ema1 - ema2
+
     def calculate(self, df: pd.DataFrame) -> pd.Series:
         """
         Calculate the indicator for the given data.
@@ -259,9 +321,7 @@ class DoubleExponentialMovingAverage(MovingAverageIndicator):
         KeyError
             If the dataframe is not standardize yet
         """
-        ema1 = ExponentialMovingAverage().calculate(df)
-        ema2 = ExponentialMovingAverage().calculate(ema1)
-        return 2*ema1 - ema2
+        return self.calculate_serie(df["Close"])
 
 
 class TripleExponentialMovingAverage(MovingAverageIndicator):
@@ -279,6 +339,9 @@ class TripleExponentialMovingAverage(MovingAverageIndicator):
     -------
     get_column_name()
         Return the column name associated at this indicator.
+
+    calculate_serie(serie)
+        Calculate the indicator for the given serie.
 
     calculate(df)
         Calculate the indicator for the given data.
@@ -308,6 +371,26 @@ class TripleExponentialMovingAverage(MovingAverageIndicator):
         MovingAverageIndicator.__init__(
             self, "TEMA (" + str(period) + ")", period)
 
+    def calculate_serie(self, serie: pd.Series) -> pd.Series:
+        """
+        Calculate the indicator for the given serie.
+
+        Parameters
+        ----------
+        serie : pd.Series
+            data used to calculate the indicator
+
+        Returns
+        -------
+        pd.Series
+            the serie containing the calculated data
+        """
+        ema_obj = ExponentialMovingAverage(self.period)
+        ema1 = ema_obj.calculate_serie(serie)
+        ema2 = ema_obj.calculate_serie(ema1)
+        ema3 = ema_obj.calculate_serie(ema2)
+        return 3*(ema1 - ema2) + ema3
+
     def calculate(self, df: pd.DataFrame) -> pd.Series:
         """
         Calculate the indicator for the given data.
@@ -327,10 +410,7 @@ class TripleExponentialMovingAverage(MovingAverageIndicator):
         KeyError
             If the dataframe is not standardize yet
         """
-        ema1 = ExponentialMovingAverage().calculate(df)
-        ema2 = ExponentialMovingAverage().calculate(ema1)
-        ema3 = ExponentialMovingAverage().calculate(ema2)
-        return 3*(ema1 - ema2) + ema3
+        return self.calculate_serie(df["Close"])
 
 
 class MovingAverageEnvelopes(MovingAverageIndicator):
@@ -350,6 +430,9 @@ class MovingAverageEnvelopes(MovingAverageIndicator):
     -------
     get_column_name()
         Return the column name associated at this indicator.
+
+    calculate_serie(serie)
+        Calculate the indicator for the given serie.
 
     calculate(df)
         Calculate the indicator for the given data.
@@ -384,6 +467,31 @@ class MovingAverageEnvelopes(MovingAverageIndicator):
         MovingAverageIndicator.__init__(
             self, "MAE (" + str(period) + ")", period)
 
+    def calculate_serie(self, serie: pd.Series) -> pd.Series:
+        """
+        Calculate the indicator for the given serie.
+
+        Parameters
+        ----------
+        serie : pd.Series
+            data used to calculate the indicator
+
+        Returns
+        -------
+        upper_band : pd.Series
+            upper band of the calculated data
+        sma : pd.Series
+            simple moving average of the data
+        lower_band : pd.Series
+            lower band of the calculated data
+        """
+        sma = SimpleMovingAverage(period=self.period).calculate(serie)
+
+        distance = sma * 3 / 100
+        upper_band = sma + distance
+        lower_band = sma - distance
+        return upper_band, sma, lower_band
+
     def calculate(self, df: pd.DataFrame) -> pd.Series:
         """
         Calculate the indicator for the given data.
@@ -407,12 +515,7 @@ class MovingAverageEnvelopes(MovingAverageIndicator):
         KeyError
             If the dataframe is not standardize yet
         """
-        sma = SimpleMovingAverage(period=self.period).calculate(df)
-
-        distance = sma * 3 / 100
-        upper_band = sma + distance
-        lower_band = sma - distance
-        return upper_band, sma, lower_band
+        return self.calculate_serie(df["Close"])
 
     def calculate_in_place(self, df: pd.DataFrame) -> None:
         """
@@ -444,6 +547,9 @@ class TriangularMovingAverage(MovingAverageIndicator):
     get_column_name()
         Return the column name associated at this indicator.
 
+    calculate_serie(serie)
+        Calculate the indicator for the given serie.
+
     calculate(df)
         Calculate the indicator for the given data.
 
@@ -472,6 +578,25 @@ class TriangularMovingAverage(MovingAverageIndicator):
         MovingAverageIndicator.__init__(
             self, "TMA (" + str(period) + ")", period)
 
+    def calculate_serie(self, serie: pd.Series) -> pd.Series:
+        """
+        Calculate the indicator for the given serie.
+
+        Parameters
+        ----------
+        serie : pd.Series
+            data used to calculate the indicator
+
+        Returns
+        -------
+        pd.Series
+            the serie containing the calculated data
+        """
+        half_length = round(0.5 * (self.period + 1))
+        sma = serie.rolling(half_length, min_periods=half_length).mean()
+        trima = sma.rolling(half_length, min_periods=half_length).mean()
+        return trima
+
     def calculate(self, df: pd.DataFrame) -> pd.Series:
         """
         Calculate the indicator for the given data.
@@ -491,10 +616,7 @@ class TriangularMovingAverage(MovingAverageIndicator):
         KeyError
             If the dataframe is not standardize yet
         """
-        half_length = round(0.5 * (self.period + 1))
-        sma = df['Close'].rolling(half_length, min_periods=half_length).mean()
-        trima = sma.rolling(half_length, min_periods=half_length).mean()
-        return trima
+        return self.calculate_serie(df["Close"])
 
 
 class WildersMovingAverage(MovingAverageIndicator):
@@ -512,6 +634,9 @@ class WildersMovingAverage(MovingAverageIndicator):
     -------
     get_column_name()
         Return the column name associated at this indicator.
+
+    calculate_serie(serie)
+        Calculate the indicator for the given serie.
 
     calculate(df)
         Calculate the indicator for the given data.
@@ -541,6 +666,23 @@ class WildersMovingAverage(MovingAverageIndicator):
         MovingAverageIndicator.__init__(
             self, "WildersMA (" + str(period) + ")", period)
 
+    def calculate_serie(self, serie: pd.Series) -> pd.Series:
+        """
+        Calculate the indicator for the given serie.
+
+        Parameters
+        ----------
+        serie : pd.Series
+            data used to calculate the indicator
+
+        Returns
+        -------
+        pd.Series
+            the serie containing the calculated data
+        """
+        alpha = (1.0 / self.period) if self.period > 0 else 0.5
+        return serie.ewm(alpha=alpha).mean()
+
     def calculate(self, df: pd.DataFrame) -> pd.Series:
         """
         Calculate the indicator for the given data.
@@ -560,8 +702,7 @@ class WildersMovingAverage(MovingAverageIndicator):
         KeyError
             If the dataframe is not standardize yet
         """
-        alpha = (1.0 / self.period) if self.period > 0 else 0.5
-        return df['Close'].ewm(alpha=alpha).mean()
+        return self.calculate_serie(df['Close'])
 
 
 class WeigthtedMovingAverage(MovingAverageIndicator):
@@ -580,7 +721,10 @@ class WeigthtedMovingAverage(MovingAverageIndicator):
     get_column_name()
         Return the column name associated at this indicator.
 
-    calculate(df)
+    calculate_serie(serie, asc=True)
+        Calculate the indicator for the given serie.
+
+    calculate(df, asc=True)
         Calculate the indicator for the given data.
 
     calculate_in_place(df)
@@ -608,6 +752,34 @@ class WeigthtedMovingAverage(MovingAverageIndicator):
         MovingAverageIndicator.__init__(
             self, "WMA (" + str(period) + ")", period)
 
+    def calculate_serie(self, serie: pd.Series, asc: bool = True) -> pd.Series:
+        """
+        Calculate the indicator for the given serie.
+
+        Parameters
+        ----------
+        serie : pd.Series
+            data used to calculate the indicator
+        asc : bool
+            recent values weights more (default = True)
+
+        Returns
+        -------
+        pd.Series
+            the serie containing the calculated data
+        """
+        total_weigth = 0.5 * self.period * (self.period + 1)
+        default_weigth = pd.Series(np.arange(1, self.period + 1))
+        weights = default_weigth if asc else default_weigth[::-1]
+        close = serie.rolling(self.period, min_periods=self.period)
+
+        def calculate_dot_product(weights):
+            def _compute(data):
+                return np.dot(data, weights) / total_weigth
+            return _compute
+
+        return close.apply(calculate_dot_product(weights), raw=True)
+
     def calculate(self, df: pd.DataFrame, asc: bool = True) -> pd.Series:
         """
         Calculate the indicator for the given data.
@@ -629,17 +801,7 @@ class WeigthtedMovingAverage(MovingAverageIndicator):
         KeyError
             If the dataframe is not standardize yet
         """
-        total_weigth = 0.5 * self.period * (self.period + 1)
-        default_weigth = pd.Series(np.arange(1, self.period + 1))
-        weights = default_weigth if asc else default_weigth[::-1]
-        close = df['Close'].rolling(self.period, min_periods=self.period)
-
-        def calculate_dot_product(weights):
-            def _compute(data):
-                return np.dot(data, weights) / total_weigth
-            return _compute
-
-        return close.apply(calculate_dot_product(weights), raw=True)
+        return self.calculate_serie(df["Close"], asc)
 
 
 # TODO: make VariableMovingAverage indicator after implementing ChandeMomentumOscillator

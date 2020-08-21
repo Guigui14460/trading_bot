@@ -36,6 +36,9 @@ class Indicator(abc.ABC):
     get_column_name()
         Return the column name associated at this indicator.
 
+    calculate_serie(serie)
+        Calculate the indicator for the given serie.
+
     calculate(df)
         Calculate the indicator for the given data.
 
@@ -79,6 +82,23 @@ class Indicator(abc.ABC):
         Parameters
         ----------
         df : pd.DataFrame
+            data used to calculate the indicator
+
+        Returns
+        -------
+        pd.Series
+            the serie containing the calculated data
+        """
+        pass
+
+    @abc.abstractmethod
+    def calculate_serie(self, serie: pd.Series) -> pd.Series:
+        """
+        Calculate the indicator for the given serie.
+
+        Parameters
+        ----------
+        serie : pd.Series
             data used to calculate the indicator
 
         Returns

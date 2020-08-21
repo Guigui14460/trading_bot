@@ -9,7 +9,7 @@ environment you are running this script in.
 
 This file can also be imported as a module and contains of the following 
 classes and functions:
-
+    * BasicIndicator - abstract class used to reprensent the base of each basic indicator that we will use
     * HighestHigh - class used to reprensent "Highest High" indicator
     * LowestLow - class used to reprensent "Lowest Low" indicator
     * MedianPrice - class used to reprensent "Median price" indicator
@@ -38,6 +38,9 @@ class BasicIndicator(Indicator, metaclass=abc.ABCMeta):
     -------
     get_column_name()
         Return the column name associated at this indicator.
+
+    calculate_serie(serie)
+        Calculate the indicator for the given serie.
 
     calculate(df)
         Calculate the indicator for the given data.
@@ -76,6 +79,9 @@ class HighestHigh(BasicIndicator):
     get_column_name()
         Return the column name associated at this indicator.
 
+    calculate_serie(serie)
+        Calculate the indicator for the given serie.
+
     calculate(df)
         Calculate the indicator for the given data.
 
@@ -104,6 +110,22 @@ class HighestHigh(BasicIndicator):
         BasicIndicator.__init__(
             self, "Highest High (" + str(period) + ")", period)
 
+    def calculate_serie(self, serie: pd.Series) -> pd.Series:
+        """
+        Calculate the indicator for the given serie.
+
+        Parameters
+        ----------
+        serie : pd.Series
+            data used to calculate the indicator
+
+        Returns
+        -------
+        pd.Series
+            the serie containing the calculated data
+        """
+        return serie.rolling(window=self.period).max(skipna=True)
+
     def calculate(self, df: pd.DataFrame) -> pd.Series:
         """
         Calculate the indicator for the given data.
@@ -123,7 +145,7 @@ class HighestHigh(BasicIndicator):
         KeyError
             If the dataframe is not standardize yet
         """
-        return df['High'].rolling(window=self.period).max(skipna=True)
+        return self.calculate_serie(df['High'])
 
 
 class LowestLow(BasicIndicator):
@@ -140,6 +162,9 @@ class LowestLow(BasicIndicator):
     -------
     get_column_name()
         Return the column name associated at this indicator.
+
+    calculate_serie(serie)
+        Calculate the indicator for the given serie.
 
     calculate(df)
         Calculate the indicator for the given data.
@@ -169,6 +194,22 @@ class LowestLow(BasicIndicator):
         BasicIndicator.__init__(
             self, "Lowest Low (" + str(period) + ")", period)
 
+    def calculate_serie(self, serie: pd.Series) -> pd.Series:
+        """
+        Calculate the indicator for the given serie.
+
+        Parameters
+        ----------
+        serie : pd.Series
+            data used to calculate the indicator
+
+        Returns
+        -------
+        pd.Series
+            the serie containing the calculated data
+        """
+        return serie.rolling(window=self.period).min(skipna=True)
+
     def calculate(self, df: pd.DataFrame) -> pd.Series:
         """
         Calculate the indicator for the given data.
@@ -188,7 +229,7 @@ class LowestLow(BasicIndicator):
         KeyError
             If the dataframe is not standardize yet
         """
-        return df['Low'].rolling(window=self.period).min(skipna=True)
+        return self.calculate_serie(df['Low'])
 
 
 class MedianPrice(BasicIndicator):
@@ -206,6 +247,9 @@ class MedianPrice(BasicIndicator):
     get_column_name()
         Return the column name associated at this indicator.
 
+    calculate_serie(high, low)
+        Calculate the indicator for the given serie.
+
     calculate(df)
         Calculate the indicator for the given data.
 
@@ -219,6 +263,24 @@ class MedianPrice(BasicIndicator):
         Initializer and constructor of the class.
         """
         BasicIndicator.__init__(self, "Median Price", 0)
+
+    def calculate_serie(self, high: pd.Series, low: pd.Series) -> pd.Series:
+        """
+        Calculate the indicator for the given serie.
+
+        Parameters
+        ----------
+        high : pd.Series
+            data used to calculate the indicator
+        low : pd.Series
+            data used to calculate the indicator
+
+        Returns
+        -------
+        pd.Series
+            the serie containing the calculated data
+        """
+        return np.mean(np.stack((high, low)), axis=0)
 
     def calculate(self, df: pd.DataFrame) -> pd.Series:
         """
@@ -239,7 +301,7 @@ class MedianPrice(BasicIndicator):
         KeyError
             If the dataframe is not standardize yet
         """
-        return np.mean(np.stack((df['High'], df['Low'])), axis=0)
+        return self.calculate_serie(df['High'], df['Low'])
 
 
 class TypicalPrice(BasicIndicator):
@@ -257,6 +319,9 @@ class TypicalPrice(BasicIndicator):
     get_column_name()
         Return the column name associated at this indicator.
 
+    calculate_serie(high, low, close)
+        Calculate the indicator for the given serie.
+
     calculate(df)
         Calculate the indicator for the given data.
 
@@ -270,6 +335,26 @@ class TypicalPrice(BasicIndicator):
         Initializer and constructor of the class.
         """
         BasicIndicator.__init__(self, "Typical Price", None)
+
+    def calculate_serie(self, high: pd.Series, low: pd.Series, close: pd.Series) -> pd.Series:
+        """
+        Calculate the indicator for the given serie.
+
+        Parameters
+        ----------
+        high : pd.Series
+            data used to calculate the indicator
+        low : pd.Series
+            data used to calculate the indicator
+        close : pd.Series
+            data used to calculate the indicator
+
+        Returns
+        -------
+        pd.Series
+            the serie containing the calculated data
+        """
+        return np.mean(np.stack((high, low, close)), axis=0)
 
     def calculate(self, df: pd.DataFrame) -> pd.Series:
         """
@@ -290,7 +375,7 @@ class TypicalPrice(BasicIndicator):
         KeyError
             If the dataframe is not standardize yet
         """
-        return np.mean(np.stack((df['High'], df['Low'], df['Close'])), axis=0)
+        return self.calculate_serie(df['High'], df['Low'], df['Close'])
 
 
 class AverageTrueRange(BasicIndicator):
@@ -307,6 +392,9 @@ class AverageTrueRange(BasicIndicator):
     -------
     get_column_name()
         Return the column name associated at this indicator.
+
+    calculate_serie(high, low, close)
+        Calculate the indicator for the given serie.
 
     calculate(df)
         Calculate the indicator for the given data.
@@ -336,6 +424,28 @@ class AverageTrueRange(BasicIndicator):
         BasicIndicator.__init__(
             self, "Average True Range (" + str(period) + ")", period)
 
+    def calculate_serie(self, high: pd.Series, low: pd.Series, close: pd.Series) -> pd.Series:
+        """
+        Calculate the indicator for the given serie.
+
+        Parameters
+        ----------
+        high : pd.Series
+            data used to calculate the indicator
+        low : pd.Series
+            data used to calculate the indicator
+        close : pd.Series
+            data used to calculate the indicator
+
+        Returns
+        -------
+        pd.Series
+            the serie containing the calculated data
+        """
+        tr = np.stack((abs(high - low), abs(high - close.shift(1)),
+                       abs(low - close.shift(1)))).max(axis=1)
+        return wwma(tr, self.period)
+
     def calculate(self, df: pd.DataFrame) -> pd.Series:
         """
         Calculate the indicator for the given data.
@@ -355,9 +465,4 @@ class AverageTrueRange(BasicIndicator):
         KeyError
             If the dataframe is not standardize yet
         """
-        tr0 = abs(df['High'] - df['Low'])
-        tr1 = abs(df['High'] - df['Close'].shift(1))
-        tr2 = abs(df['Low'] - df['Close'].shift(1))
-        tr = np.stack((tr0, tr1, tr2)).max(axis=1)
-        atr = wwma(tr, self.period)
-        return atr
+        return self.calculate_serie(df["High"], df["Low"], df["Close"])
