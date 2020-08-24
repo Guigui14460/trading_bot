@@ -1,3 +1,17 @@
+"""Some useful functions.
+
+This file contains some functions often used in different indicators.
+
+This script requires that `pandas` be installed within the Python 
+environment you are running this script in.
+
+This file can also be imported as a module and contains of the following 
+classes and functions:
+    * wwma - calculate the Welle Wilder's Exponential Moving Average
+    * roc - calculate the rate of change of a price serie
+    * non_zero_range - returns the difference of two series and adds epsilon if to any zero values
+"""
+
 import sys
 
 import pandas as pd

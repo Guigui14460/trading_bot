@@ -14,6 +14,7 @@ classes and functions:
 """
 
 import abc
+
 import pandas as pd
 
 

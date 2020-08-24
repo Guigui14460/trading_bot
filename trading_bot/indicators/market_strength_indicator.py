@@ -21,11 +21,12 @@ classes and functions:
 """
 
 import abc
-from trading_bot.indicators.moving_average_indicator import ExponentialMovingAverage, SimpleMovingAverage
+
 import numpy as np
 import pandas as pd
 
 from trading_bot.indicators.base_indicator import Indicator
+from trading_bot.indicators.moving_average_indicator import ExponentialMovingAverage, SimpleMovingAverage
 from trading_bot.indicators.utils import non_zero_range, roc
 
 
@@ -416,7 +417,7 @@ class ChaikinMoneyFlow(MarketStrengthIndicator):
             number of ticks that indicator is based to calculate (default = 21)
         """
         MarketStrengthIndicator.__init__(
-            self, "Chaikin MF", period)
+            self, "Chaikin MF (" + str(period) + ")", period)
 
     def calculate_serie(self, high: pd.Series, low: pd.Series, close: pd.Series, volume: pd.Series) -> pd.Series:
         """
@@ -506,7 +507,7 @@ class ChaikinOscillator(MarketStrengthIndicator):
             number of ticks that indicator is based to calculate the second accumulation distribution EMA (default = 10)
         """
         MarketStrengthIndicator.__init__(
-            self, "Chaikin Oscillator", period)
+            self, "Chaikin Oscillator (" + str(period) + ", " + str(period2) + ")", period)
         self.period2 = period2
 
     def calculate_serie(self, high: pd.Series, low: pd.Series, close: pd.Series, volume: pd.Series) -> pd.Series:
@@ -601,7 +602,7 @@ class PercentageVolumeOscillator(MarketStrengthIndicator):
             number of ticks for the EMA (default = 9)
         """
         MarketStrengthIndicator.__init__(
-            self, "PVO", period)
+            self, "PVO (" + str(period) + ", " + str(period2) + ", " + str(period3) + ")", period)
         self.period2 = period2
         self.period3 = period3
 

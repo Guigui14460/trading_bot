@@ -21,6 +21,7 @@ classes and functions:
 """
 
 import abc
+
 import numpy as np
 import pandas as pd
 
@@ -465,7 +466,7 @@ class MovingAverageEnvelopes(MovingAverageIndicator):
         if percent < 0:
             percent = 0
         MovingAverageIndicator.__init__(
-            self, "MAE (" + str(period) + ")", period)
+            self, "MAE (" + str(period) + ") " + str(percent*100) + "%", period)
 
     def calculate_serie(self, serie: pd.Series) -> pd.Series:
         """

@@ -9,18 +9,22 @@ environment you are running this script in.
 
 This file can also be imported as a module and contains of the following 
 classes and functions:
-    * MomentumIndicator - abstract class used to reprensent the base of each market strength indicator that we will use
-    * SimpleMovingAverage -  class used to reprensent "Simple Moving Average" or "SMA" indicator
+    * MomentumIndicator - abstract class used to reprensent the base of each momentum indicator that we will use
+    * MovingAverageConvergenceDivergence -  class used to reprensent "Moving Average Convergence Divergence" or "MACD" indicator
+    * RelativeStrengthIndex - class used to reprensent "Relative Strength Index" or "RSI" indicator
+    * CommodityChannelIndex - class used to reprensent "Commodity Channel Index" or "CCI" indicator
+    * RateOfChange - class used to reprensent "Rate Of Change" or "ROC" indicator
+    * WilliamsPercentR - class used to reprensent "Williams %R" indicator
 """
 
 import abc
-from trading_bot.indicators.basic_indicator import HighestHigh, LowestLow, TypicalPrice
-from trading_bot.indicators.utils import roc, wwma
-from trading_bot.indicators.moving_average_indicator import ExponentialMovingAverage
-import numpy as np
+
 import pandas as pd
 
 from trading_bot.indicators.base_indicator import Indicator
+from trading_bot.indicators.basic_indicator import HighestHigh, LowestLow, TypicalPrice
+from trading_bot.indicators.moving_average_indicator import ExponentialMovingAverage
+from trading_bot.indicators.utils import roc, wwma
 
 
 class MomentumIndicator(Indicator, metaclass=abc.ABCMeta):
@@ -109,7 +113,7 @@ class MovingAverageConvergenceDivergence(MomentumIndicator):
             number of ticks that indicator is based to calculate (default = 15)
         """
         MomentumIndicator.__init__(
-            self, "MACD", period1)
+            self, "MACD (" + str(period1) + ", " + str(period2) + ", " + str(period3) + ")", period1)
         self.period2 = period2
         self.period3 = period3
 
@@ -216,7 +220,7 @@ class RelativeStrengthIndex(MomentumIndicator):
             number of ticks that indicator is based to calculate (default = 14)
         """
         MomentumIndicator.__init__(
-            self, "RSI", period)
+            self, "RSI (" + str(period) + ")", period)
 
     def calculate_serie(self, close: pd.Series) -> pd.Series:
         """
@@ -266,10 +270,10 @@ class RelativeStrengthIndex(MomentumIndicator):
         return self.calculate_serie(df["Close"])
 
 
-class CommodityChannemIndex(MomentumIndicator):
+class CommodityChannelIndex(MomentumIndicator):
     """
     A class used to reprensent "Commodity Channel Index" or "CCI" indicator.
-    This momentum indicator makes a line with the comparaison the typical price to the mean over n periods.
+    This momentum indicator makes a line with the comparison the typical price to the mean over n periods.
     Is computed using the high, low and closing prices.
 
     Attributes
@@ -303,7 +307,7 @@ class CommodityChannemIndex(MomentumIndicator):
             number of ticks that indicator is based to calculate (default = 20)
         """
         MomentumIndicator.__init__(
-            self, "CCI", period)
+            self, "CCI (" + str(period) + ")", period)
 
     def calculate_serie(self, high: pd.Series, low: pd.Series, close: pd.Series) -> pd.Series:
         """
@@ -387,7 +391,7 @@ class RateOfChange(MomentumIndicator):
             number of ticks that indicator is based to calculate (default = 12)
         """
         MomentumIndicator.__init__(
-            self, "ROC", period)
+            self, "ROC (" + str(period) + ")", period)
 
     def calculate_serie(self, close: pd.Series) -> pd.Series:
         """
@@ -464,7 +468,7 @@ class WilliamsPercentR(MomentumIndicator):
             number of ticks that indicator is based to calculate (default = 10)
         """
         MomentumIndicator.__init__(
-            self, "Williams %R", period)
+            self, str(period) + " Williams %R", period)
 
     def calculate_serie(self, high: pd.Series, low: pd.Series, close: pd.Series) -> pd.Series:
         """
