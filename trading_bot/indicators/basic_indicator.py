@@ -124,7 +124,7 @@ class HighestHigh(BasicIndicator):
         pd.Series
             the serie containing the calculated data
         """
-        return serie.rolling(window=self.period).max(skipna=True)
+        return serie.rolling(window=self.period, min_periods=self.period).max(skipna=True)
 
     def calculate(self, df: pd.DataFrame) -> pd.Series:
         """
@@ -208,7 +208,7 @@ class LowestLow(BasicIndicator):
         pd.Series
             the serie containing the calculated data
         """
-        return serie.rolling(window=self.period).min(skipna=True)
+        return serie.rolling(window=self.period, min_periods=self.period).min(skipna=True)
 
     def calculate(self, df: pd.DataFrame) -> pd.Series:
         """

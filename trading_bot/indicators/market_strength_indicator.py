@@ -2,7 +2,7 @@
 
 This file allows developer to use any market strength financial indicator contains in this file.
 
-All market strength indicator classes must inherit from the `MarketStrengthIndicator` class to standardize all used moving average indicators.
+All market strength indicator classes must inherit from the `MarketStrengthIndicator` class to standardize all used market strength indicators.
 
 This script requires that `pandas` and `numpy` be installed within the Python 
 environment you are running this script in.
