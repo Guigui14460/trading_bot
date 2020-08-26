@@ -2,7 +2,7 @@
 
 This file contains some functions often used in different indicators.
 
-This script requires that `pandas` be installed within the Python 
+This script requires that `pandas` and `numpy` be installed within the Python 
 environment you are running this script in.
 
 This file can also be imported as a module and contains of the following 
@@ -14,6 +14,7 @@ classes and functions:
 
 import sys
 
+import numpy as np
 import pandas as pd
 
 
@@ -76,3 +77,37 @@ def non_zero_range(high: pd.Series, low: pd.Series) -> pd.Series:
     if diff.eq(0).any().any():
         diff += sys.float_info.epsilon
     return diff
+
+
+def recent_maximum_index(x: np.array) -> int:
+    """
+    Return the index of the most recent maximum value of the array.
+
+    Parameters
+    ----------
+    x : np.array
+        array to search the maximum value
+
+    Returns
+    -------
+    int
+        the index of the maximum value
+    """
+    return int(np.argmax(x[::-1]))
+
+
+def recent_minimum_index(x: np.array) -> int:
+    """
+    Return the index of the most recent minimum value of the array.
+
+    Parameters
+    ----------
+    x : np.array
+        array to search the minimum value
+
+    Returns
+    -------
+    int
+        the index of the minimum value
+    """
+    return int(np.argmin(x[::-1]))
