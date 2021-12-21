@@ -1,4 +1,6 @@
-# trading_bot
+# trading_bot (
+
+**Warning** : This project is not finished and will be continued soon.
 
 This project is a bot that allows you to trade all kinds of assets (stocks, currencies, cryptocurrencies, ...), strategies, and APIs for exchanges.
 
