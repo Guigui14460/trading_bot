@@ -1,4 +1,4 @@
-# trading_bot (
+# Trading Bot
 
 **Warning** : This project is not finished and will be continued soon.
 
